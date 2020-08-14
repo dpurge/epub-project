@@ -7,8 +7,10 @@ setup(
     packages = find_packages('src'),
     package_dir = {'':'src'},
     install_requires = [
+       "EbookLib",
        "Jinja2",
        "PyYAML",
-       "Markdown"
+       "Markdown",
+       "markdown-full-yaml-metadata"
     ]
 )
