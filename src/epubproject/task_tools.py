@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+import uuid
 
 
 def create_directories(*directories):
@@ -27,3 +28,14 @@ def delete_directories(*directories):
                 "Deleting directory: {directory}".format(
                     directory = directory))
             shutil.rmtree(d)
+
+
+def sequence():
+    x = 0
+    while True:
+        x += 1
+        yield x
+
+
+def uid_for_path(path):
+    return uuid.uuid5(uuid.NAMESPACE_DNS, path).hex

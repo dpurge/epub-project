@@ -10,3 +10,7 @@ class Document(NamedTuple):
     fonts: List = []
     stylesheets: List = []
     texts: List = []
+
+class Section(NamedTuple):
+    title: str
+    directory: str

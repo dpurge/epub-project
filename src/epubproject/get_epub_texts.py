@@ -1,20 +1,15 @@
 import jinja2
 import markdown
-import uuid
 
 from pathlib import Path
 from ebooklib.epub import EpubHtml
 from lxml.html import fromstring
 
-# from .configuration import Text
+from .extensions import VocabularyListExtension
+from .extensions import DialogListExtension
+from .task_tools import uid_for_path
 
-def sequence():
-    x = 0
-    while True:
-        x += 1
-        yield x
-
-def get_epub_texts(directory, templates):
+def get_epub_texts(directory, templates, sequence):
 
     templateLoader = jinja2.FileSystemLoader(searchpath=templates)
     templateEnv = jinja2.Environment(loader=templateLoader)
@@ -22,9 +17,9 @@ def get_epub_texts(directory, templates):
     md = markdown.Markdown(extensions=[
         'tables',
         'full_yaml_metadata',
-        'attr_list'])
-
-    text_sequence = sequence()
+        'attr_list',
+        VocabularyListExtension(),
+        DialogListExtension()])
 
     for filename in Path(directory).glob('**/*.md'):
         with open(filename, encoding='utf-8') as f:
@@ -40,8 +35,8 @@ def get_epub_texts(directory, templates):
 
             doc = fromstring(html)
 
-            fn = 'text-{:0>4}.xhtml'.format(next(text_sequence))
-            uid = uuid.uuid5(uuid.NAMESPACE_DNS, fn).hex
+            fn = 'text-{:0>4}.xhtml'.format(next(sequence))
+            uid = uid_for_path(fn)
             text = EpubHtml(
                 uid = uid,
                 file_name = fn,

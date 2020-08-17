@@ -1,6 +1,7 @@
-import uuid
 from ebooklib.epub import EpubItem
 from pathlib import Path
+
+from .task_tools import uid_for_path
 
 def get_epub_font(filename):
     p = Path(filename)
@@ -9,7 +10,7 @@ def get_epub_font(filename):
         raise 'Font file does not exist: {filename}'.format(filename = filename)
 
     fn = 'fonts/{filename}'.format(filename = p.name)
-    uid = uuid.uuid5(uuid.NAMESPACE_DNS, fn).hex
+    uid = uid_for_path(fn)
 
     with open(p, mode='rb') as f:
         font = EpubItem(
