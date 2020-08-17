@@ -8,12 +8,5 @@ class Document(NamedTuple):
     templates: str
     authors: List = []
     fonts: List = []
-    fontstyles: List = []
+    stylesheets: List = []
     texts: List = []
-
-class Text(NamedTuple):
-    title: str
-    filename: str
-    markdown: str
-    html: str
-    lang: str

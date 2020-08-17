@@ -1,11 +1,14 @@
 # import os
+import uuid
+
 from pathlib import Path, PurePath
 
 from ebooklib import epub
-from ebooklib import ITEM_FONT
+# from ebooklib import ITEM_FONT
 
-from .get_file_uid import get_file_uid
-from .get_texts import get_texts
+from .get_epub_font import get_epub_font
+from .get_epub_style import get_epub_style
+from .get_epub_texts import get_epub_texts
 
 def create_epub_document(doc):
 
@@ -22,38 +25,26 @@ def create_epub_document(doc):
         book.add_author(author)
 
     for font_file in doc.fonts:
-        with open(font_file, mode='rb') as f:
-            font_uid = get_file_uid(filename=font_file, prefix='font')
-            font = epub.EpubItem(
-                uid = font_uid,
-                file_name = 'fonts/{filename}'.format(filename = font_basename),
-                media_type = 'application/vnd.ms-opentype',
-                content = f.read())
-            book.add_item(font)
+        book.add_item(get_epub_font(font_file))
 
-    for font_stylesheet in doc.fontstyles:
-        uid_font_style = get_file_uid(filename=font_stylesheet, prefix='style_fonts')
-        style = get_epub_style(uid_font_style, font_stylesheet)
-        book.add_item(style)
+    for stylesheet in doc.stylesheets:
+        book.add_item(get_epub_style(stylesheet))
 
     book.spine = ['nav']
 
     book.toc = []
     for textdir in doc.texts:
-        for text in get_texts(directory=textdir, templates=doc.templates):
-            item = epub.EpubHtml(
-                title = text.title,
-                file_name = text.filename,
-                lang = text.lang)
-            item.content = text.html
-            book.add_item(item)
-            book.spine.append(item)
-            print(text.filename)
+        for text in get_epub_texts(directory=textdir, templates=doc.templates):
+            book.add_item(text)
+            book.spine.append(text)
+            book.toc.append(text)
 
     book.add_item(epub.EpubNcx())
     
     nav = epub.EpubNav()
-
+    style_nav = book.get_item_with_id(uuid.uuid5(uuid.NAMESPACE_DNS, 'style/nav.css').hex)
+    if style_nav:
+        nav.add_item(style_nav)
     book.add_item(nav)
 
     epub.write_epub(doc.filename, book, {})
