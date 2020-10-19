@@ -8,6 +8,7 @@ from ebooklib import epub
 
 from .get_epub_font import get_epub_font
 from .get_epub_style import get_epub_style
+from .get_epub_section import get_epub_section
 from .get_epub_texts import get_epub_texts
 from .task_tools import sequence, uid_for_path
 
@@ -34,18 +35,22 @@ def create_epub_document(doc):
     book.spine = ['nav']
 
     book.toc = []
+    section_sequence = sequence()
     text_sequence = sequence()
     for s in doc.texts:
 
-        section = epub.Section(s.title)
-        section_texts = []
-
-        for text in get_epub_texts(directory=s.directory, templates=doc.templates, sequence = text_sequence):
+        section, text = get_epub_section(section=s, templates=doc.templates, sequence = section_sequence)
+        if section and text:
             book.add_item(text)
             book.spine.append(text)
-            section_texts.append(text)
 
-        book.toc.append((section, section_texts))
+            section_texts = []
+            for text in get_epub_texts(directory=s.directory, templates=doc.templates, sequence = text_sequence):
+                book.add_item(text)
+                book.spine.append(text)
+                section_texts.append(text)
+
+            book.toc.append((section, section_texts))
 
     book.add_item(epub.EpubNcx())
     

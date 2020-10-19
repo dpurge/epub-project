@@ -12,5 +12,5 @@ class Document(NamedTuple):
     texts: List = []
 
 class Section(NamedTuple):
-    title: str
+    text: str
     directory: str
