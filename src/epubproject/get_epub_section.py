@@ -44,7 +44,7 @@ def get_epub_section(section, templates, sequence):
                 file_name = fn,
                 title = title,
                 lang = lang)
-            text.content = title
+            text.content = html
             style = meta.get('style')
             if style:
                 text.add_link(href='style/{style}.css'.format(style=style), rel='stylesheet', type='text/css')
