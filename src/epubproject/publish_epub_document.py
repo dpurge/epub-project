@@ -20,12 +20,12 @@ def publish_epub_document(doc):
 	# 	"--pdf-page-numbers"])
 	# yield output_pdf
 
-	# output_pdf_b6 = input_file.with_suffix('.b6.pdf')
-	# result = subprocess.run([ebook_convert, str(input_file), str(output_pdf_b6),
-	# 	"--paper-size", "b6",
-	# 	"--pdf-page-margin-bottom", "36",
-	# 	"--pdf-page-margin-left", "24",
-	# 	"--pdf-page-margin-right", "24",
-	# 	"--pdf-page-margin-top", "24",
-	# 	"--pdf-page-numbers"])
-	# yield output_pdf_b6
+	output_pdf_b6 = input_file.with_suffix('.b6.pdf')
+	result = subprocess.run([ebook_convert, str(input_file), str(output_pdf_b6),
+		"--paper-size", "b6",
+		"--pdf-page-margin-bottom", "36",
+		"--pdf-page-margin-left", "24",
+		"--pdf-page-margin-right", "24",
+		"--pdf-page-margin-top", "24",
+		"--pdf-page-numbers"])
+	yield output_pdf_b6
