@@ -10,7 +10,7 @@ def publish_epub_document(doc):
 	result = subprocess.run([ebook_convert, str(input_file), str(output_azw3)])
 	yield output_azw3
 
-	# output_pdf = input_file.with_suffix('.pdf')
+	# output_pdf = input_file.with_suffix('.a5.pdf')
 	# result = subprocess.run([ebook_convert, str(input_file), str(output_pdf),
 	# 	"--paper-size", "a5",
 	# 	"--pdf-page-margin-bottom", "36",
