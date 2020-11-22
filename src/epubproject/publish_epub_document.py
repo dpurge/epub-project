@@ -1,31 +1,14 @@
-import subprocess
+from pathlib import Path
 
-from pathlib import Path, PurePath
+from .publish import publish_azw3_document, publish_pdf_document, publish_vocabulary_document
 
 def publish_epub_document(doc):
-	ebook_convert = "D:\\pgm\\Calibre\\Calibre\\ebook-convert.exe"
-	input_file = PurePath(doc.filename)
+	input_file = Path(doc.filename)
 
-	output_azw3 = input_file.with_suffix('.azw3')
-	result = subprocess.run([ebook_convert, str(input_file), str(output_azw3)])
-	yield output_azw3
-
-	# output_pdf = input_file.with_suffix('.a5.pdf')
-	# result = subprocess.run([ebook_convert, str(input_file), str(output_pdf),
-	# 	"--paper-size", "a5",
-	# 	"--pdf-page-margin-bottom", "36",
-	# 	"--pdf-page-margin-left", "24",
-	# 	"--pdf-page-margin-right", "24",
-	# 	"--pdf-page-margin-top", "24",
-	# 	"--pdf-page-numbers"])
-	# yield output_pdf
-
-	output_pdf_b6 = input_file.with_suffix('.b6.pdf')
-	result = subprocess.run([ebook_convert, str(input_file), str(output_pdf_b6),
-		"--paper-size", "b6",
-		"--pdf-page-margin-bottom", "36",
-		"--pdf-page-margin-left", "24",
-		"--pdf-page-margin-right", "24",
-		"--pdf-page-margin-top", "24",
-		"--pdf-page-numbers"])
-	yield output_pdf_b6
+	if input_file.exists():
+		yield publish_vocabulary_document(doc)
+		# yield publish_azw3_document(doc)
+		# yield publish_pdf_document(doc, 'a5')
+		# yield publish_pdf_document(doc, 'b6')
+	else:
+		print('ePub file does not exist: {filename}'.format(filename = doc.filename))

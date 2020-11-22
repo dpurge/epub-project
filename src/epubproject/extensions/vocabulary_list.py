@@ -20,7 +20,7 @@ class VocabularyListProcessor(BlockProcessor):
 
     RE = re.compile(r'(^|\n)[ ]{0,3}:[ ]{1,3}(.*?)(\n|$)')
     NO_INDENT_RE = re.compile(r'^[ ]{0,3}[^ :]')
-    DESCRIPTION_RE = re.compile(r'^(\s*{(?P<grammar>[^}]+)})?(\s*\[(?P<transcription>[^\]]+)\])?\s*(?P<translation>.+)$')
+    DESCRIPTION_RE = re.compile(r'^(\s*{(?P<grammar>[^}]+)})?(\s*\[(?P<transcription>[^\]]+)\])?\s*(?P<translation>[^\(\)]*)?\s*(?P<notes>\([^\(\)]*\))?$')
 
     def test(self, parent, block):
         return bool(self.RE.search(block))
@@ -77,6 +77,7 @@ class VocabularyListProcessor(BlockProcessor):
 
         # Add definition
         self.parser.state.set(state)
+
         dd = etree.SubElement(dl, 'dd')
         dd.set('class', 'vocabulary-definition')
         description = self.DESCRIPTION_RE.match(d)
@@ -99,12 +100,20 @@ class VocabularyListProcessor(BlockProcessor):
             if translation_text:
                 translation = etree.SubElement(dd, 'span')
                 translation.set('class', 'vocabulary-translation')
-                self.parser.parseBlocks(translation, [translation_text])
-                self.parser.state.reset()
+                self.parser.parseBlocks(translation, [translation_text.strip()])
+
+            notes_text = description.group('notes')
+            if notes_text:
+                notes = etree.SubElement(dd, 'span')
+                notes.set('class', 'vocabulary-notes')
+                notes_text = notes_text.lstrip('( ')
+                notes_text = notes_text.rstrip(' )')
+                self.parser.parseBlocks(notes, [notes_text])
         else:
             # this should never happen, but keep it just in case of an error in regexp
             self.parser.parseBlocks(dd, [d])
-            self.parser.state.reset()
+
+        self.parser.state.reset()
 
         if theRest:
             blocks.insert(0, theRest)
