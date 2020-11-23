@@ -7,7 +7,7 @@ def publish_epub_document(doc):
 
 	if input_file.exists():
 		yield publish_vocabulary_document(doc)
-		# yield publish_azw3_document(doc)
+		yield publish_azw3_document(doc)
 		# yield publish_pdf_document(doc, 'a5')
 		# yield publish_pdf_document(doc, 'b6')
 	else:
