@@ -15,6 +15,7 @@ def get_epub_texts(directory, templates, sequence):
     templateEnv = jinja2.Environment(loader=templateLoader)
 
     md = markdown.Markdown(extensions=[
+        'footnotes',
         'tables',
         'full_yaml_metadata',
         'attr_list',
