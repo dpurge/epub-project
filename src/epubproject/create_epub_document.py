@@ -52,12 +52,15 @@ def create_epub_document(doc):
 
             book.toc.append((section, section_texts))
 
-    book.add_item(epub.EpubNcx())
     
+    
+    ncx = epub.EpubNcx()
     nav = epub.EpubNav()
     style_nav = book.get_item_with_id(uid_for_path('style/nav.css'))
     if style_nav:
+        ncx.add_item(style_nav)
         nav.add_item(style_nav)
+    book.add_item(ncx)
     book.add_item(nav)
 
     epub.write_epub(doc.filename, book, {})
